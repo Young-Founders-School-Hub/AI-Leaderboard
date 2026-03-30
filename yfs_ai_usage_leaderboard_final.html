@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Usage Leaderboard — Young Founders School</title>
+<link rel="icon" href="https://static.wixstatic.com/media/8b55c1_3b47324284a144b68a37201cb3fc767f~mv2.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:#0B6B5A;--teal-l:#0D8A73;--teal-p:#E6F5F1;--teal-d:#064D42;--teal-dd:#032E26;
+  --bg:#F5F7F6;--sf:#FFFFFF;--tx:#1A1A1A;--txm:#6B7370;--txh:#9BA09D;
+  --brd:#E4E7E6;--g100:#F1F3F2;
+  --gold:#D4A843;--gold-bg:#FEF3C7;--gold-dk:#92400E;
+  --silver:#94A3B8;--silver-bg:#F1F5F9;--silver-dk:#475569;
+  --bronze:#C47A4A;--bronze-bg:#FDE8D8;--bronze-dk:#7C3A12;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0C1210;--sf:#162420;--tx:#E8EDEB;--txm:#8A9490;--txh:#5A6460;
+  --brd:#243632;--g100:#1A2C28;--teal-p:#0D2E27;
+  --gold-bg:#3D2A08;--gold-dk:#FDE68A;--silver-bg:#1E293B;--silver-dk:#CBD5E1;--bronze-bg:#3D1D08;--bronze-dk:#FED7AA;
+}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+
+#confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+
+.tb{background:linear-gradient(135deg,var(--teal-dd) 0%,var(--teal-d) 50%,var(--teal) 100%);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;overflow:hidden}
+.tb::after{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.tb-l{display:flex;align-items:center;gap:12px;z-index:1}
+.tb-l img{height:30px;filter:brightness(10);transition:transform .3s}
+.tb-l img:hover{transform:scale(1.1)}
+.tb-l .d{width:1px;height:20px;background:rgba(255,255,255,.2)}
+.tb-l h1{color:#fff;font-size:14px;font-weight:500;letter-spacing:-.2px}
+.tb-r{display:flex;align-items:center;gap:8px;z-index:1}
+.rb{width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(8px)}
+.rb:hover{background:rgba(255,255,255,.2);transform:rotate(90deg)}
+.rb.spin svg{animation:sp .6s cubic-bezier(.4,0,.2,1)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.st{font-size:10px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:4px}
+.dot{width:6px;height:6px;border-radius:50%;transition:all .3s}
+.dot.on{background:#34D399;box-shadow:0 0 8px #34D39966;animation:pd 2s ease infinite}
+.dot.off{background:#E85D4A}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.5}}
+
+.ctn{max-width:940px;margin:0 auto;padding:20px}
+
+/* SPOTLIGHT */
+.spotlight{background:linear-gradient(135deg,var(--teal-d),var(--teal),var(--teal-l));border-radius:16px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden;opacity:0;transform:translateY(20px);animation:su .6s cubic-bezier(.22,1,.36,1) .1s forwards}
+.spotlight::before{content:'';position:absolute;top:-40%;right:-15%;width:350px;height:350px;background:radial-gradient(circle,rgba(255,255,255,.08) 0%,transparent 60%);border-radius:50%}
+.spotlight::after{content:'';position:absolute;bottom:-30%;left:-10%;width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,.05) 0%,transparent 60%);border-radius:50%}
+.sp-in{display:flex;align-items:center;gap:20px;position:relative;z-index:1}
+.sp-md{flex-shrink:0}
+.sp-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;background:rgba(255,255,255,.15);color:#fff;border:3px solid rgba(255,255,255,.25);flex-shrink:0;backdrop-filter:blur(4px)}
+.sp-info{flex:1;min-width:0}
+.sp-tag{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.6);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.sp-tag .crown{font-size:14px;animation:bnc 2s ease infinite}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.sp-nm{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:2px}
+.sp-msg{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5}
+.sp-sc-wrap{text-align:right;flex-shrink:0}
+.sp-sc{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.2);line-height:1}
+.sp-sc span{font-size:16px;color:rgba(255,255,255,.6);font-weight:500}
+.sp-sc-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px}
+
+/* TIED BADGE */
+.tie-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);margin-left:8px;vertical-align:middle}
+.tie-badge-row{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:500;padding:2px 6px;border-radius:8px;background:var(--gold-bg);color:var(--gold-dk);margin-left:6px;vertical-align:middle}
+
+/* FILTER PILLS */
+.filter-row{display:flex;align-items:center;gap:6px;margin-bottom:18px;flex-wrap:wrap;opacity:0;transform:translateY(12px);animation:su .4s cubic-bezier(.22,1,.36,1) .15s forwards}
+.fpill{font-family:inherit;font-size:12px;font-weight:500;padding:7px 16px;border-radius:20px;border:1px solid var(--brd);background:var(--sf);color:var(--txm);cursor:pointer;transition:all .25s cubic-bezier(.22,1,.36,1);white-space:nowrap}
+.fpill:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-1px)}
+.fpill.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 2px 10px rgba(11,107,90,.25)}
+.fpill.active:hover{background:var(--teal-l);transform:translateY(-1px)}
+.filter-label{font-size:11px;color:var(--txh);text-transform:uppercase;letter-spacing:.6px;font-weight:500;margin-right:4px}
+
+/* SCORING EXPLAINER */
+.score-info{display:flex;align-items:center;gap:6px;margin-bottom:18px;opacity:0;animation:su .4s cubic-bezier(.22,1,.36,1) .2s forwards}
+.score-info-btn{font-family:inherit;font-size:11px;color:var(--txm);background:var(--sf);border:1px solid var(--brd);border-radius:16px;padding:5px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+.score-info-btn:hover{border-color:var(--teal);color:var(--teal)}
+.score-info-btn svg{width:12px;height:12px}
+.score-explain{display:none;background:var(--sf);border:1px solid var(--brd);border-radius:10px;padding:14px 18px;font-size:12px;color:var(--txm);line-height:1.7;margin-bottom:18px;animation:su .3s ease forwards}
+.score-explain.open{display:block}
+.score-explain strong{color:var(--tx);font-weight:600}
+.score-explain code{background:var(--g100);padding:1px 5px;border-radius:3px;font-size:11px;font-family:'Space Grotesk',monospace}
+
+@keyframes su{to{opacity:1;transform:translateY(0)}}
+@keyframes fs{to{opacity:1;transform:scale(1)}}
+@keyframes sr{to{opacity:1;transform:translateX(0)}}
+.au{opacity:0;transform:translateY(20px);animation:su .5s cubic-bezier(.22,1,.36,1) forwards}
+.as{opacity:0;transform:scale(.9);animation:fs .5s cubic-bezier(.22,1,.36,1) forwards}
+.ar{opacity:0;transform:translateX(-15px);animation:sr .4s cubic-bezier(.22,1,.36,1) forwards}
+
+/* METRICS */
+.mg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.mc{background:var(--sf);border:1px solid var(--brd);border-radius:12px;padding:16px 18px;transition:all .3s cubic-bezier(.22,1,.36,1);cursor:default}
+.mc:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(11,107,90,.08)}
+.mc .l{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.7px;color:var(--txm);margin-bottom:5px}
+.mc .v{font-size:24px;font-weight:700;line-height:1.1;font-family:'Space Grotesk',sans-serif}
+.mc .s{font-size:11px;color:var(--txm);margin-top:3px}
+.mc.ac{background:linear-gradient(135deg,var(--teal),var(--teal-l));border-color:transparent;box-shadow:0 4px 16px rgba(11,107,90,.2)}
+.mc.ac .l,.mc.ac .s{color:rgba(255,255,255,.65)}
+.mc.ac .v{color:#fff}
+.mc.ac:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(11,107,90,.3)}
+
+.cd{background:var(--sf);border:1px solid var(--brd);border-radius:14px;overflow:hidden;margin-bottom:20px;transition:box-shadow .3s}
+.cd:hover{box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.cd-t{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.7px;color:var(--txm);padding:18px 20px 14px}
+
+/* PODIUM */
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:0 24px 0}
+.ps{display:flex;flex-direction:column;align-items:center;flex:1;max-width:220px}
+.pa{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-bottom:6px;border:3px solid var(--sf);transition:transform .3s}
+.ps:hover .pa{transform:scale(1.1)}
+.mw{margin-bottom:4px}
+.p-nm{font-weight:600;font-size:14px;text-align:center;margin-bottom:2px}
+.p-sc{font-size:22px;font-weight:700;margin-bottom:2px;font-family:'Space Grotesk',sans-serif}
+.p-sub{font-size:10px;color:var(--txm);margin-bottom:8px;text-align:center}
+.p-br{width:100%;border-radius:12px 12px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:14px;font-size:16px;font-weight:700;letter-spacing:.5px;transition:height .6s cubic-bezier(.22,1,.36,1)}
+
+/* BOARD — 5 columns: rank, member, avg%, score, entries */
+.bh{display:grid;grid-template-columns:52px 1fr 100px 90px 70px;gap:8px;padding:10px 20px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--txm);border-bottom:1px solid var(--brd)}
+.br{display:grid;grid-template-columns:52px 1fr 100px 90px 70px;gap:8px;padding:14px 20px;align-items:center;border-bottom:1px solid var(--brd);transition:all .25s cubic-bezier(.22,1,.36,1);cursor:default}
+.br:last-child{border-bottom:none}
+.br:hover{background:var(--teal-p);transform:translateX(4px)}
+.rc{display:flex;align-items:center;justify-content:center}
+.rn{font-size:14px;font-weight:700;color:var(--txh);font-family:'Space Grotesk',sans-serif}
+.mb{width:34px;height:34px;display:flex;align-items:center;justify-content:center;transition:transform .3s}
+.br:hover .mb{transform:scale(1.2) rotate(-5deg)}
+.pc{display:flex;align-items:center;gap:10px;min-width:0}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0;transition:transform .3s}
+.br:hover .av{transform:scale(1.08)}
+.nm{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dt{font-size:10px;color:var(--txm)}
+.bc{position:relative;height:26px;background:var(--g100);border-radius:6px;overflow:hidden}
+.bf{position:absolute;top:0;left:0;height:100%;border-radius:6px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.bf-z{width:0 !important}
+.bl{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif}
+.sc-cell{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;text-align:center}
+.ec{font-size:12px;color:var(--txm);text-align:center}
+
+.cc{background:var(--sf);border:1px solid var(--brd);border-radius:14px;padding:20px;transition:box-shadow .3s}
+.cc:hover{box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.ct-t{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.7px;color:var(--txm);margin-bottom:14px}
+.cw{position:relative;width:100%;height:270px}
+
+.ls{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;gap:14px;color:var(--txm)}
+.spin-l{width:32px;height:32px;border:3px solid var(--brd);border-top-color:var(--teal);border-radius:50%;animation:sp .7s linear infinite}
+.eb{background:var(--sf);border:1px solid var(--brd);border-radius:14px;padding:28px;text-align:center}
+.eb h3{font-size:15px;font-weight:500;margin-bottom:6px}
+.eb p{font-size:12px;color:var(--txm);max-width:480px;margin:0 auto 14px;line-height:1.6}
+.eb textarea{width:100%;max-width:520px;height:100px;font-family:monospace;font-size:11px;padding:10px;border:1px solid var(--brd);border-radius:6px;background:var(--g100);color:var(--tx);resize:vertical;margin-bottom:8px}
+.btn{background:var(--teal);color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:500;padding:8px 18px;border-radius:6px;cursor:pointer;transition:all .2s}
+.btn:hover{background:var(--teal-l);transform:translateY(-1px)}
+.tip{background:var(--teal-p);border:1px solid var(--teal);border-radius:6px;padding:10px 14px;font-size:11px;color:var(--tx);max-width:520px;margin:10px auto 0;line-height:1.6;text-align:left}
+.tip code{background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px;font-size:10px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--txm)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.empty h3{font-size:16px;font-weight:500;margin-bottom:4px;color:var(--tx)}
+.empty p{font-size:13px}
+
+@media(max-width:768px){
+  .mg{grid-template-columns:repeat(2,1fr)}
+  .pod{gap:4px;padding:0 12px}
+  .pa{width:44px;height:44px;font-size:13px}
+  .p-sc{font-size:18px}
+  .p-br{padding-top:10px;font-size:14px}
+  .bh,.br{grid-template-columns:44px 1fr 80px 70px 50px;gap:6px;padding:12px 16px}
+  .sp-in{flex-wrap:wrap;gap:14px}
+  .sp-sc{font-size:28px}
+  .sp-nm{font-size:18px}
+  .mc .v{font-size:20px}
+}
+@media(max-width:540px){
+  .tb{padding:10px 14px}
+  .tb-l h1{font-size:12px}
+  .tb-l img{height:24px}
+  .ctn{padding:14px}
+  .mg{gap:8px;margin-bottom:14px}
+  .mc{padding:12px;border-radius:10px}
+  .mc .v{font-size:18px}
+  .spotlight{padding:18px 20px;border-radius:12px}
+  .sp-in{gap:12px}
+  .sp-md svg{width:36px;height:36px}
+  .sp-av{width:44px;height:44px;font-size:15px}
+  .sp-nm{font-size:16px}
+  .sp-msg{font-size:12px}
+  .sp-sc{font-size:24px}
+  .sp-sc span{font-size:13px}
+  .filter-row{gap:5px}
+  .fpill{font-size:11px;padding:6px 12px}
+  .filter-label{font-size:10px}
+  .pod{gap:2px;padding:0 6px}
+  .pa{width:38px;height:38px;font-size:12px;border-width:2px}
+  .mw svg{width:30px;height:30px}
+  .p-nm{font-size:12px}
+  .p-sc{font-size:16px;margin-bottom:2px}
+  .p-sub{font-size:9px}
+  .p-br{font-size:12px;padding-top:8px}
+  .bh{display:none}
+  .br{grid-template-columns:38px 1fr 80px;gap:6px;padding:10px 12px}
+  .br .ec,.br .sc-cell{display:none}
+  .av{width:30px;height:30px;font-size:10px}
+  .nm{font-size:12px}
+  .bc{height:22px}
+  .bl{font-size:10px;right:4px}
+  .mb{width:28px;height:28px}
+  .mb svg{width:24px;height:24px}
+  .cc{padding:14px;border-radius:12px}
+  .cw{height:220px}
+}
+@media(max-width:380px){
+  .mg{grid-template-columns:1fr}
+  .sp-in{flex-direction:column;text-align:center}
+  .sp-sc-wrap{text-align:center}
+  .sp-tag{justify-content:center}
+  .filter-row{justify-content:center}
+}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="tb">
+  <div class="tb-l">
+    <img src="https://static.wixstatic.com/media/8b55c1_3b47324284a144b68a37201cb3fc767f~mv2.png" alt="YFS" onerror="this.style.display='none'">
+    <div class="d"></div>
+    <h1>AI usage leaderboard</h1>
+  </div>
+  <div class="tb-r">
+    <span class="st"><span class="dot" id="sd"></span><span id="sl">Connecting...</span></span>
+    <button class="rb" id="rbtn" title="Refresh"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg></button>
+  </div>
+</div>
+<div class="ctn"><div id="ct"><div class="ls"><div class="spin-l"></div><span>Fetching leaderboard data...</span></div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// =============================================
+// IST TIMEZONE HELPERS (UTC+5:30) — from v7
+// =============================================
+const IST_MS = 5.5 * 60 * 60 * 1000;
+
+function nowIST() {
+  return new Date(Date.now() + new Date().getTimezoneOffset() * 60000 + IST_MS);
+}
+
+function toYMD(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function todayIST() { return toYMD(nowIST()); }
+
+function istDateOnly() {
+  const n = nowIST();
+  return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+}
+
+// =============================================
+// CONFETTI
+// =============================================
+const cvs=document.getElementById('confetti'),cx=cvs.getContext('2d');
+let cW,cH,particles=[];
+function rcv(){cW=cvs.width=window.innerWidth;cH=cvs.height=window.innerHeight}
+rcv();window.addEventListener('resize',rcv);
+function boom(){
+  const cols=['#0B6B5A','#D4A843','#E85D4A','#6B5CE7','#34D399','#3B82F6','#F59E0B','#EC4899'];
+  for(let i=0;i<120;i++)particles.push({x:cW/2+(Math.random()-.5)*cW*.6,y:cH*.3,vx:(Math.random()-.5)*12,vy:-(Math.random()*14+4),w:Math.random()*8+4,h:Math.random()*6+3,color:cols[~~(Math.random()*cols.length)],rot:Math.random()*360,rv:(Math.random()-.5)*12,life:1,dc:Math.random()*.008+.004,g:.15});
+  aCf();
+}
+function aCf(){
+  if(!particles.length)return;cx.clearRect(0,0,cW,cH);
+  particles=particles.filter(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rv;p.life-=p.dc;p.vx*=.99;if(p.life<=0)return false;cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);cx.globalAlpha=p.life;cx.fillStyle=p.color;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();return true});
+  if(particles.length)requestAnimationFrame(aCf);
+}
+
+// =============================================
+// DATA & STATE
+// =============================================
+const WH='https://yfs-n8n.u487vy.easypanel.host/webhook/leaderboard-data';
+let D=[],chart=null,firstLoad=true,activeFilter='all',showExplain=false;
+
+const CLR=[{f:'#0B6B5A',b:'#E6F5F1'},{f:'#6B5CE7',b:'#EEEDFE'},{f:'#E85D4A',b:'#FDE8E4'},{f:'#D4A843',b:'#FEF3C7'},{f:'#3B82F6',b:'#E6F1FB'},{f:'#C47A4A',b:'#FDE8D8'},{f:'#0D8A73',b:'#CCECE4'}];
+const CHX=['#0B6B5A','#6B5CE7','#E85D4A','#D4A843','#3B82F6','#C47A4A','#0D8A73'];
+
+function mSVG(type,size){
+  size=size||36;
+  const c={gold:{r1:'#E85D4A',r2:'#C4412B',d:'#F5C542',dd:'#D4A843',sh:'#FDE68A',st:'#B8901A',rn:'#C49A2A'},silver:{r1:'#6B5CE7',r2:'#5346C0',d:'#CBD5E1',dd:'#94A3B8',sh:'#F1F5F9',st:'#7A8A98',rn:'#8A9AA8'},bronze:{r1:'#0B6B5A',r2:'#064D42',d:'#E8A87C',dd:'#C47A4A',sh:'#FDE8D8',st:'#A06838',rn:'#B07848'}}[type];
+  return `<svg width="${size}" height="${size}" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L13 22H22L18 2Z" fill="${c.r1}"/><path d="M30 2L35 22H26L30 2Z" fill="${c.r2}"/><path d="M18 2L22 22H26L30 2H18Z" fill="${c.r1}" opacity=".4"/><circle cx="24" cy="30" r="15.5" fill="${c.d}"/><circle cx="24" cy="30" r="15" stroke="${c.rn}" stroke-width="1" fill="none"/><circle cx="24" cy="30" r="12" fill="${c.dd}"/><circle cx="24" cy="30" r="9.5" fill="${c.d}" stroke="${c.rn}" stroke-width=".5"/><path d="M24 22.5l2 4 4.4.6-3.2 3.1.8 4.3L24 32.2l-4 2.3.7-3.9-3.2-3.1 4.4-.6 2-4z" fill="${c.st}"/><ellipse cx="19.5" cy="25.5" rx="3.5" ry="2" fill="${c.sh}" opacity=".2" transform="rotate(-25 19.5 25.5)"/></svg>`;
+}
+
+const ini=n=>n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+// =============================================
+// DATE FILTER — IST BASED (from v7)
+// =============================================
+function filt(data, key) {
+  if (key === 'all') return data;
+
+  const tStr = todayIST();
+  const tD = istDateOnly();
+
+  if (key === 'today') {
+    return data.filter(r => r.Date === tStr);
+  }
+
+  if (key === 'this_week') {
+    const dow = tD.getDay();
+    const mon = new Date(tD);
+    mon.setDate(tD.getDate() - (dow === 0 ? 6 : dow - 1));
+    const monStr = toYMD(mon);
+    return data.filter(r => r.Date >= monStr && r.Date <= tStr);
+  }
+
+  if (key === 'last_week') {
+    const dow = tD.getDay();
+    const thisMon = new Date(tD);
+    thisMon.setDate(tD.getDate() - (dow === 0 ? 6 : dow - 1));
+    const lastMon = new Date(thisMon);
+    lastMon.setDate(thisMon.getDate() - 7);
+    const lastSun = new Date(thisMon);
+    lastSun.setDate(thisMon.getDate() - 1);
+    return data.filter(r => r.Date >= toYMD(lastMon) && r.Date <= toYMD(lastSun));
+  }
+
+  if (key === 'this_month') {
+    const startStr = tStr.slice(0, 8) + '01';
+    return data.filter(r => r.Date >= startStr && r.Date <= tStr);
+  }
+
+  return data;
+}
+
+// =============================================
+// SCORING LOGIC — from v4 (weighted scoring)
+// =============================================
+/*
+  Weighted Score = avg_percentage * consistency_factor
+  consistency_factor = entries / max_entries_in_period (capped at 1.0)
+
+  This means:
+  - Person A: 2 entries avg 95% -> score = 95 * (2/maxE)
+  - Person B: 5 entries avg 80% -> score = 80 * (5/maxE)
+  If maxE = 5: A = 95*(2/5) = 38, B = 80*(5/5) = 80 -> B wins (consistency matters)
+
+  TIE BREAKING:
+  1. More entries wins (greater consistency)
+  2. Higher latest score wins (recent momentum)
+  3. Alphabetical by name
+*/
+function brd(data){
+  const m={};
+  data.forEach(r=>{
+    const n=r['Team Member Name'];
+    if(!m[n])m[n]={name:n,email:r.Email,scores:[],dates:[],areas:[]};
+    m[n].scores.push(r['AI Usage Percentage']);
+    m[n].dates.push(r.Date);
+    if(r['Areas Using AI'])m[n].areas.push(r['Areas Using AI']);
+  });
+
+  const people=Object.values(m).map(p=>({
+    ...p,
+    avg:Math.round(p.scores.reduce((a,b)=>a+b,0)/p.scores.length),
+    latest:p.scores[p.scores.length-1],
+    entries:p.scores.length,
+    topArea:p.areas.length?p.areas[p.areas.length-1].split(';')[0].trim():''
+  }));
+
+  const maxEntries=Math.max(...people.map(p=>p.entries),1);
+
+  people.forEach(p=>{
+    p.consistency=Math.min(p.entries/maxEntries,1);
+    p.weightedScore=Math.round(p.avg*p.consistency);
+  });
+
+  people.sort((a,b)=>{
+    if(b.weightedScore!==a.weightedScore)return b.weightedScore-a.weightedScore;
+    if(b.entries!==a.entries)return b.entries-a.entries;
+    if(b.latest!==a.latest)return b.latest-a.latest;
+    return a.name.localeCompare(b.name);
+  });
+
+  // Assign ranks with tie logic
+  people.forEach((p,i)=>{
+    if(i===0){p.rank=1;p.tied=false;}
+    else{
+      const prev=people[i-1];
+      if(p.weightedScore===prev.weightedScore){
+        p.rank=prev.rank;
+        p.tied=true;
+        prev.tied=true;
+      }else{
+        p.rank=i+1;
+        p.tied=false;
+      }
+    }
+  });
+
+  return people;
+}
+
+function ss(ok){
+  const d=document.getElementById('sd'),l=document.getElementById('sl');
+  const n=nowIST();
+  const ts=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+  if(ok){d.className='dot on';l.textContent='Live \u00b7 '+ts+' IST';}
+  else{d.className='dot off';l.textContent='Offline';}
+}
+
+const gratz=["is absolutely crushing it with AI","is leading the AI revolution at YFS","is setting the gold standard for AI adoption","is blazing the trail in AI-first workflows","is showing everyone how it's done"];
+const filterLabels={all:'All time',today:'Today',this_week:'This week',last_week:'Last week',this_month:'This month'};
+
+async function fd(){
+  const b=document.getElementById('rbtn');b.classList.add('spin');
+  try{const r=await fetch(WH);if(!r.ok)throw new Error('HTTP '+r.status);D=await r.json();ss(true);render();if(firstLoad){setTimeout(boom,600);firstLoad=false;}}
+  catch(e){console.error(e);ss(false);if(!D.length)sf(e.message);}
+  setTimeout(()=>b.classList.remove('spin'),500);
+}
+
+function sf(msg){
+  const cors=msg.includes('Failed to fetch')||msg.includes('NetworkError');
+  document.getElementById('ct').innerHTML=`<div class="eb"><h3>Could not reach the webhook</h3><p>${cors?'This is likely a <strong>CORS issue</strong> \u2014 your browser blocks the request because n8n isn\'t returning the right headers.':'Check that n8n is running and the workflow is active.'}</p>${cors?`<div class="tip"><strong>Fix CORS in n8n:</strong><br>Webhook node \u2192 Options \u2192 Response Header:<br><code>Access-Control-Allow-Origin</code> = <code>*</code><br>Save &amp; reactivate, then refresh.</div>`:``}<p style="margin-top:16px"><strong>Or paste JSON:</strong></p><textarea id="jp" placeholder="Open the webhook URL in a browser, copy the JSON, paste here..."></textarea><br><button class="btn" onclick="lp()">Load data</button></div>`;
+}
+function lp(){try{D=JSON.parse(document.getElementById('jp').value.trim());ss(true);document.getElementById('sl').textContent='Manual';render();boom();}catch(e){alert('Invalid JSON.');}}
+
+window.setFilter=function(key){activeFilter=key;render();};
+window.toggleExplain=function(){showExplain=!showExplain;const el=document.getElementById('explainer');if(el)el.classList.toggle('open',showExplain);};
+
+function render(){
+  const f=filt(D,activeFilter),b=brd(f);
+  let h='';
+
+  // FILTER PILLS
+  h+='<div class="filter-row"><span class="filter-label">Show:</span>';
+  Object.entries(filterLabels).forEach(([k,v])=>{h+=`<button class="fpill${activeFilter===k?' active':''}" onclick="setFilter('${k}')">${v}</button>`;});
+  h+='</div>';
+
+  if(!b.length){
+    h+=`<div class="cd"><div class="empty"><div class="empty-icon">\u{1f50d}</div><h3>No check-ins for "${filterLabels[activeFilter]}"</h3><p>Try a different time range, or check back after the next AI review session.</p></div></div>`;
+    document.getElementById('ct').innerHTML=h;return;
+  }
+
+  const maxE=Math.max(...b.map(p=>p.entries),1);
+  const ta=Math.round(b.reduce((a,p)=>a+p.weightedScore,0)/b.length);
+  const hi=Math.max(...f.map(r=>r['AI Usage Percentage']));
+  const leader=b[0];
+  const msg=gratz[~~(Math.random()*gratz.length)];
+  const leaderTied=leader.tied;
+
+  // SPOTLIGHT — shows weighted score with breakdown
+  h+=`<div class="spotlight"><div class="sp-in">
+    <div class="sp-md">${mSVG('gold',48)}</div>
+    <div class="sp-av">${ini(leader.name)}</div>
+    <div class="sp-info">
+      <div class="sp-tag"><span class="crown">\u{1f451}</span> Current leader${leaderTied?'<span class="tie-badge">\u{1f91d} Tied</span>':''}</div>
+      <div class="sp-nm">${leader.name}</div>
+      <div class="sp-msg">${leader.name.split(' ')[0]} ${msg}! ${leader.topArea?'Top area: '+leader.topArea+'.':''} Keep pushing the boundaries!</div>
+    </div>
+    <div class="sp-sc-wrap">
+      <div class="sp-sc">${leader.weightedScore}<span>pts</span></div>
+      <div class="sp-sc-sub">${leader.avg}% avg \u00d7 ${leader.entries}/${maxE} entries</div>
+    </div>
+  </div></div>`;
+
+  // SCORING EXPLAINER
+  h+=`<div class="score-info"><button class="score-info-btn" onclick="toggleExplain()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> How is the score calculated?</button></div>`;
+  h+=`<div id="explainer" class="score-explain${showExplain?' open':''}">
+    <strong>Weighted Score</strong> = Average AI % \u00d7 Consistency Factor<br>
+    <strong>Consistency Factor</strong> = Your entries \u00f7 Most entries anyone has (<code>${maxE}</code>)<br><br>
+    This rewards both high AI usage <em>and</em> consistent check-ins. Someone with 2 entries at 95% gets a lower score than someone with 5 entries at 80% \u2014 because showing up matters.<br><br>
+    <strong>Tie-breaking:</strong> If two people have the same weighted score \u2192 more entries wins. Still tied \u2192 higher latest score wins. Still tied \u2192 alphabetical.
+  </div>`;
+
+  // METRICS — weighted score based
+  h+='<div class="mg">';
+  h+=mkmc('Avg score',ta+'pts',b.length+' members',1,.2);
+  h+=mkmc('Top score',leader.weightedScore+'pts',leader.name.split(' ')[0],0,.3);
+  h+=mkmc('Check-ins',''+f.length,'Total reviews',0,.4);
+  h+=mkmc('Best session',hi+'%','Single score',0,.5);
+  h+='</div>';
+
+  // PODIUM — shows weighted score + breakdown
+  if(b.length>=2){
+    h+=`<div class="cd au" style="animation-delay:.5s"><div class="cd-t">Top performers</div><div class="pod">`;
+    const ord=b.length>=3?[1,0,2]:[1,0];
+    const ht=b.length>=3?[95,135,72]:[95,135];
+    const mt=['gold','silver','bronze'];
+    const bBg=['var(--gold-bg)','var(--silver-bg)','var(--bronze-bg)'];
+    const bFg=['var(--gold-dk)','var(--silver-dk)','var(--bronze-dk)'];
+    ord.forEach((bi,di)=>{
+      const p=b[bi],c=CLR[bi%CLR.length];
+      h+=`<div class="ps as" style="animation-delay:${.6+di*.15}s">
+        <div class="mw">${mSVG(mt[bi],40)}</div>
+        <div class="pa" style="background:${c.b};color:${c.f}">${ini(p.name)}</div>
+        <div class="p-nm">${p.name}${p.tied?'<span class="tie-badge-row">\u{1f91d}</span>':''}</div>
+        <div class="p-sc" style="color:${c.f}">${p.weightedScore}pts</div>
+        <div class="p-sub">${p.avg}% avg \u00b7 ${p.entries} entries</div>
+        <div class="p-br" style="height:${ht[di]}px;background:${bBg[bi]};color:${bFg[bi]}">${p.rank===b[bi===0?1:bi===1?0:2]?.rank?'=':''}${['1st','2nd','3rd'][bi]}</div>
+      </div>`;
+    });
+    h+='</div></div>';
+  }
+
+  // FULL BOARD — 5 columns with Score column
+  h+=`<div class="cd au" style="animation-delay:.7s"><div class="cd-t">Full rankings</div>`;
+  h+='<div class="bh"><span>Rank</span><span>Member</span><span>Avg %</span><span>Score</span><span>Entries</span></div>';
+  b.forEach((p,i)=>{
+    const c=CLR[i%CLR.length];
+    const mt=['gold','silver','bronze'];
+    let rk=p.rank<=3?`<div class="mb">${mSVG(mt[p.rank-1],30)}</div>`:`<span class="rn">#${p.rank}</span>`;
+    const tieTag=p.tied?'<span class="tie-badge-row">\u{1f91d}</span>':'';
+    h+=`<div class="br ar" style="animation-delay:${.8+i*.08}s">
+      <div class="rc">${rk}</div>
+      <div class="pc">
+        <div class="av" style="background:${c.b};color:${c.f}">${ini(p.name)}</div>
+        <div style="min-width:0"><div class="nm">${p.name}${tieTag}</div><div class="dt">Latest: ${p.latest}%</div></div>
+      </div>
+      <div class="bc">
+        <div class="bf bf-z" style="background:${c.f};opacity:.65" data-w="${Math.max(p.avg,8)}"></div>
+        <div class="bl">${p.avg}%</div>
+      </div>
+      <div class="sc-cell" style="color:${c.f}">${p.weightedScore}</div>
+      <div class="ec">${p.entries}/${maxE}</div>
+    </div>`;
+  });
+  h+='</div>';
+
+  // CHART
+  h+=`<div class="cc au" style="animation-delay:${.9+b.length*.08}s"><div class="ct-t">Usage trend over time</div><div class="cw"><canvas id="tc"></canvas></div></div>`;
+
+  document.getElementById('ct').innerHTML=h;
+  requestAnimationFrame(()=>{setTimeout(()=>{document.querySelectorAll('.bf-z').forEach(el=>{el.style.width=el.dataset.w+'%';el.classList.remove('bf-z')});},400)});
+  mkChart(b);
+}
+
+function mkmc(l,v,s,ac,delay){return `<div class="mc${ac?' ac':''} au" style="animation-delay:${delay}s"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`}
+
+function mkChart(b){
+  const dk=matchMedia('(prefers-color-scheme:dark)').matches,ctx=document.getElementById('tc');
+  if(!ctx)return;if(chart)chart.destroy();
+  const dates=[...new Set(D.map(r=>r.Date))].sort();
+  const ds=b.map((p,i)=>{const c=CHX[i%CHX.length];return{label:p.name.split(' ')[0],data:dates.map(d=>{const e=D.find(r=>r['Team Member Name']===p.name&&r.Date===d);return e?e['AI Usage Percentage']:null}),borderColor:c,backgroundColor:c+'18',tension:.35,pointRadius:5,pointHoverRadius:8,pointBackgroundColor:c,pointBorderColor:dk?'#162420':'#fff',pointBorderWidth:2,borderWidth:2.5,spanGaps:true,fill:false}});
+  chart=new Chart(ctx,{type:'line',data:{labels:dates,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},animation:{duration:1200,easing:'easeOutQuart'},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',color:dk?'#5A6460':'#A8B0AD',font:{size:11}},grid:{color:dk?'rgba(255,255,255,.04)':'rgba(0,0,0,.04)'}},x:{ticks:{color:dk?'#5A6460':'#A8B0AD',maxRotation:45,font:{size:11}},grid:{display:false}}},plugins:{legend:{display:true,labels:{usePointStyle:true,pointStyle:'circle',padding:14,font:{family:"'DM Sans',sans-serif",size:12},color:dk?'#8A9490':'#6B7370'}},tooltip:{backgroundColor:dk?'#162420':'#fff',titleColor:dk?'#E8EDEB':'#1A1A1A',bodyColor:dk?'#8A9490':'#6B7370',borderColor:dk?'#243632':'#E4E7E6',borderWidth:1,cornerRadius:8,callbacks:{label:c=>' '+c.dataset.label+': '+Math.round(c.parsed.y)+'%'}}}}});
+}
+
+document.getElementById('rbtn').addEventListener('click',fd);
+fd();setInterval(fd,120000);
+</script>
+</body>
+</html>
